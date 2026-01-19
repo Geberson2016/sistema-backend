@@ -1,12 +1,12 @@
 package com.projetoweb.sistema_backend.services;
 
+import com.projetoweb.sistema_backend.dto.OrderDTO;
 import com.projetoweb.sistema_backend.entities.Order;
 import com.projetoweb.sistema_backend.repositories.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class OrderService {
@@ -14,12 +14,17 @@ public class OrderService {
     @Autowired
     private OrderRepository repository;
 
-    public List<Order> findAll() {
-        return repository.findAll();
+    public List<OrderDTO> findAll() {
+        return repository.findAll()
+                .stream()
+                .map(OrderDTO::new)
+                .toList();
     }
 
-    public Order findById(Long id) {
-        Optional<Order> obj =  repository.findById(id);
-        return obj.get();
+    public OrderDTO findById(Long id) {
+        Order order = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        return new OrderDTO(order);
     }
 }
